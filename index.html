@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            coral: {
+              50: '#FFE9E6',
+              100: '#FFD6D0',
+              500: '#FF6B6B',
+              600: '#F15B5B',
+            },
+          },
+          boxShadow: {
+            soft: '0 10px 30px rgba(16,24,40,0.06)',
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    html, body { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 8px; }
+    .card { box-shadow: 0 8px 24px rgba(16,24,40,0.06); }
+    /* Hash-based view toggles (no JS) */
+    #categories:target ~ #categoriesSection { display: block; }
+    #categories:target ~ #dashboardSection, #categories:target ~ #myTaskSection { display: none; }
+    #dashboard:target ~ #dashboardSection { display: block; }
+    #dashboard:target ~ #categoriesSection, #dashboard:target ~ #myTaskSection { display: none; }
+    #mytask:target ~ #myTaskSection { display: block; }
+    #mytask:target ~ #dashboardSection, #mytask:target ~ #categoriesSection { display: none; }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-800">
+<!-- Navbar -->
+<header class="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur border-b border-slate-200">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-4">
+    <label for="navToggle" class="lg:hidden mr-2 rounded-md border border-slate-200 bg-white p-2 cursor-pointer">
+      <svg class="w-5 h-5 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </label>
+    <h1 class="text-2xl font-semibold"><span class="text-coral-600">Dash</span>board</h1>
+    <div class="hidden lg:block w-[30rem]">
+      <div class="relative">
+        <input type="text" placeholder="Search your task here..." class="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-coral-500" />
+        <svg class="absolute left-3 top-2.5 w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button class="bg-white border border-slate-200 rounded-xl p-2"><span class="sr-only">Notifications</span>
+        <svg class="w-5 h-5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6.002 6.002 0 0 0-4-5.659V4a2 2 0 1 0-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
+      <button class="bg-white border border-slate-200 rounded-xl p-2">
+        <svg class="w-5 h-5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      </button>
+      <div class="ml-2 text-right">
+        <p class="text-sm font-medium">Tuesday</p>
+        <p class="text-xs text-slate-500">20/06/2023</p>
+      </div>
+    </div>
+  </div>
+</header>
+<input id="navToggle" type="checkbox" class="peer hidden" />
+<label id="sidebarOverlay" for="navToggle" class="fixed inset-0 bg-black/30 hidden z-30 lg:hidden peer-checked:block"></label>
+
+<!-- Wrapper -->
+<div class="min-h-screen pt-24">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed top-24 left-0 w-64 h-[calc(100vh-6rem)] bg-coral-500 text-white p-6 flex flex-col overflow-y-auto -translate-x-full lg:translate-x-0 peer-checked:translate-x-0 transition-transform duration-300 z-40">
+      <label for="navToggle" class="lg:hidden mb-4 rounded-md border border-white/30 bg-white/10 px-3 py-1 text-white cursor-pointer">Close</label>
+      <div class="flex items-center gap-4 mb-6">
+        <img class="w-12 h-12 rounded-full ring-2 ring-white/50" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=150&auto=format&fit=crop" alt="avatar" />
+        <div>
+          <p class="font-semibold">Sundar Gurung</p>
+          <p class="text-xs opacity-90">sundargurung360@gmail.com</p>
+        </div>
+      </div>
+      <nav class="space-y-2 text-sm">
+        <a id="navDashboard" data-nav class="block hover:bg-white/25 rounded-lg px-3 py-2" href="#dashboard">Dashboard</a>
+        <a class="block hover:bg-white/15 rounded-lg px-3 py-2" href="#mytask">My Task</a>
+        <a id="navCategories" data-nav class="block hover:bg-white/25 rounded-lg px-3 py-2" href="#categories">Task Categories</a>
+      </nav>
+      <div class="mt-auto pt-6">
+        <button class="w-full bg-white text-coral-600 hover:bg-white/90 font-semibold rounded-lg py-2">Logout</button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="p-8 lg:ml-64">
+        <a id="dashboard"></a>
+        <a id="categories"></a>
+        <a id="mytask"></a>
+        <div id="dashboardSection">
+      <!-- Top bar moved to full-width navbar -->
+
+      <!-- Greeting -->
+      <div class="mt-8">
+        <h2 class="text-3xl font-semibold">Welcome back, <span class="text-slate-900">Sundar</span> 👋</h2>
+      </div>
+
+      <!-- Content grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        <!-- To-Do -->
+        <section class="bg-white rounded-2xl p-5 card">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-semibold">To-Do</span>
+              <span class="text-xs text-slate-500">Today</span>
+            </div>
+            <button class="text-sm text-coral-600 hover:text-coral-500">+ Add task</button>
+          </div>
+
+          <!-- Task cards -->
+          <div class="space-y-4">
+            <!-- Task 1 -->
+            <article class="border border-slate-200 rounded-xl p-4 flex gap-4">
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 bg-red-500 rounded-full"></span>
+                  <h3 class="font-semibold">Attend Nischal's Birthday Party</h3>
+                </div>
+                <p class="text-sm text-slate-600 mt-2">Buy gifts on the way and pick up cake from the bakery. 6 PM | Fresh Elements.</p>
+                <div class="mt-3 flex items-center gap-4 text-xs">
+                  <span>Priority: <span class="text-slate-900">Moderate</span></span>
+                  <span>Status: <span class="text-red-600">Not Started</span></span>
+                  <span>Created on: 20/06/2023</span>
+                </div>
+              </div>
+              <img class="w-24 h-20 rounded-lg object-cover" src="https://images.unsplash.com/photo-1542060748-10c28b62716b?q=80&w=300&auto=format&fit=crop" alt="party" />
+            </article>
+
+            <!-- Task 2 -->
+            <article class="border border-slate-200 rounded-xl p-4 flex gap-4">
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                  <h3 class="font-semibold">Landing Page Design for TravelDays</h3>
+                </div>
+                <p class="text-sm text-slate-600 mt-2">Get the work done by EOD and discuss with client before leaving. 4 PM | Meeting Room.</p>
+                <div class="mt-3 flex items-center gap-4 text-xs">
+                  <span>Priority: <span class="text-slate-900">Moderate</span></span>
+                  <span>Status: <span class="text-blue-600">In Progress</span></span>
+                  <span>Created on: 20/06/2023</span>
+                </div>
+              </div>
+              <img class="w-24 h-20 rounded-lg object-cover" src="https://images.unsplash.com/photo-1518081461904-9ac3e7ab20d2?q=80&w=300&auto=format&fit=crop" alt="design" />
+            </article>
+
+            <!-- Task 3 -->
+            <article class="border border-slate-200 rounded-xl p-4 flex gap-4">
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 bg-amber-500 rounded-full"></span>
+                  <h3 class="font-semibold">Presentation on Final Product</h3>
+                </div>
+                <p class="text-sm text-slate-600 mt-2">Make sure everything is functioning and all the necessities are properly met. Prepare the team and get the documents ready.</p>
+                <div class="mt-3 flex items-center gap-4 text-xs">
+                  <span>Priority: <span class="text-slate-900">Moderate</span></span>
+                  <span>Status: <span class="text-blue-600">In Progress</span></span>
+                  <span>Created on: 19/06/2023</span>
+                </div>
+              </div>
+              <img class="w-24 h-20 rounded-lg object-cover" src="https://images.unsplash.com/photo-1557800636-894a64c1696f?q=80&w=300&auto=format&fit=crop" alt="presentation" />
+            </article>
+          </div>
+        </section>
+
+        <!-- Task Status -->
+        <section class="bg-white rounded-2xl p-5 card">
+          <h3 class="font-semibold mb-4">Task Status</h3>
+          <div class="grid grid-cols-3 gap-6">
+            <!-- Donut 1 -->
+            <div class="flex flex-col items-center">
+              <svg viewBox="0 0 120 120" class="w-28 h-28">
+                <circle cx="60" cy="60" r="52" fill="none" stroke="#e5e7eb" stroke-width="12" />
+                <circle cx="60" cy="60" r="52" fill="none" stroke="#22c55e" stroke-width="12" stroke-linecap="round" stroke-dasharray="274 326" transform="rotate(-90 60 60)" />
+                <text x="60" y="66" text-anchor="middle" font-size="18" font-weight="700" fill="#0f172a">84%</text>
+              </svg>
+              <p class="mt-1 text-xs text-slate-600 font-medium">Completed</p>
+            </div>
+            <!-- Donut 2 -->
+            <div class="flex flex-col items-center">
+              <svg viewBox="0 0 120 120" class="w-28 h-28">
+                <circle cx="60" cy="60" r="52" fill="none" stroke="#e5e7eb" stroke-width="12" />
+                <circle cx="60" cy="60" r="52" fill="none" stroke="#3b82f6" stroke-width="12" stroke-linecap="round" stroke-dasharray="150 326" transform="rotate(-90 60 60)" />
+                <text x="60" y="66" text-anchor="middle" font-size="18" font-weight="700" fill="#0f172a">46%</text>
+              </svg>
+              <p class="mt-1 text-xs text-slate-600 font-medium">In Progress</p>
+            </div>
+            <!-- Donut 3 -->
+            <div class="flex flex-col items-center">
+              <svg viewBox="0 0 120 120" class="w-28 h-28">
+                <circle cx="60" cy="60" r="52" fill="none" stroke="#e5e7eb" stroke-width="12" />
+                <circle cx="60" cy="60" r="52" fill="none" stroke="#ef4444" stroke-width="12" stroke-linecap="round" stroke-dasharray="42 326" transform="rotate(-90 60 60)" />
+                <text x="60" y="66" text-anchor="middle" font-size="18" font-weight="700" fill="#0f172a">13%</text>
+              </svg>
+              <p class="mt-1 text-xs text-slate-600 font-medium">Not Started</p>
+            </div>
+          </div>
+          <div class="mt-4 flex items-center gap-6 text-xs">
+            <span class="flex items-center gap-2"><span class="w-2 h-2 bg-green-500 rounded-full"></span>Completed</span>
+            <span class="flex items-center gap-2"><span class="w-2 h-2 bg-blue-500 rounded-full"></span>In Progress</span>
+            <span class="flex items-center gap-2"><span class="w-2 h-2 bg-red-500 rounded-full"></span>Not Started</span>
+          </div>
+        </section>
+      </div>
+
+      <!-- Completed Task -->
+      <section class="bg-white rounded-2xl p-5 mt-6 card">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-sm font-semibold">Completed Task</span>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <article class="border border-slate-200 rounded-xl p-4 flex gap-4 items-center">
+            <div class="flex-1">
+              <h4 class="font-semibold">Walk the dog</h4>
+              <p class="text-sm text-slate-600 mt-1">Take the dog to the park and bring treats as well.</p>
+              <p class="text-xs mt-2"><span class="text-green-600 font-medium">Status: Completed</span> • Completed 2 days ago</p>
+            </div>
+            <img class="w-24 h-20 rounded-lg object-cover" src="https://images.unsplash.com/photo-1558944351-c0fa6d5b0c4f?q=80&w=300&auto=format&fit=crop" alt="dog" />
+          </article>
+
+          <article class="border border-slate-200 rounded-xl p-4 flex gap-4 items-center">
+            <div class="flex-1">
+              <h4 class="font-semibold">Conduct meeting</h4>
+              <p class="text-sm text-slate-600 mt-1">Meet with the client and finalize requirements.</p>
+              <p class="text-xs mt-2"><span class="text-green-600 font-medium">Status: Completed</span> • Completed 2 days ago</p>
+            </div>
+            <img class="w-24 h-20 rounded-lg object-cover" src="https://images.unsplash.com/photo-1518609570663-8ee05a2f9d45?q=80&w=300&auto=format&fit=crop" alt="meeting" />
+          </article>
+        </div>
+      </section>
+      <!-- end dashboard -->
+      </div>
+
+      <div id="categoriesSection" class="hidden">
+        <section class="bg-white rounded-2xl p-6 card">
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-semibold">Task Categories</h2>
+            <a href="#dashboard" class="text-sm text-coral-600 hover:text-coral-500">Go Back</a>
+          </div>
+          <div class="mt-4">
+            <button class="bg-coral-500 text-white text-sm font-medium px-3 py-1 rounded-md">Add Category</button>
+          </div>
+          <div class="mt-6 space-y-6">
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-medium text-sm">Task Status</h3>
+                <a href="#" class="text-xs text-coral-600">+ Add Task Status</a>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="min-w-full text-sm">
+                  <thead class="text-slate-500">
+                    <tr class="border-b border-slate-200">
+                      <th class="w-14 text-left py-2 px-2">SN</th>
+                      <th class="text-left py-2 px-2">Task Status</th>
+                      <th class="text-right py-2 px-2">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="border-b border-slate-200">
+                      <td class="py-2 px-2">1</td>
+                      <td class="py-2 px-2">Completed</td>
+                      <td class="py-2 px-2 text-right">
+                        <button class="inline-flex items-center gap-1 bg-orange-500 text-white px-2 py-1 rounded-md">Edit</button>
+                        <button class="inline-flex items-center gap-1 bg-orange-500/90 text-white px-2 py-1 rounded-md ml-2">Delete</button>
+                      </td>
+                    </tr>
+                    <tr class="border-b border-slate-200">
+                      <td class="py-2 px-2">2</td>
+                      <td class="py-2 px-2">In Progress</td>
+                      <td class="py-2 px-2 text-right">
+                        <button class="inline-flex items-center gap-1 bg-orange-500 text-white px-2 py-1 rounded-md">Edit</button>
+                        <button class="inline-flex items-center gap-1 bg-orange-500/90 text-white px-2 py-1 rounded-md ml-2">Delete</button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="py-2 px-2">3</td>
+                      <td class="py-2 px-2">Not Started</td>
+                      <td class="py-2 px-2 text-right">
+                        <button class="inline-flex items-center gap-1 bg-orange-500 text-white px-2 py-1 rounded-md">Edit</button>
+                        <button class="inline-flex items-center gap-1 bg-orange-500/90 text-white px-2 py-1 rounded-md ml-2">Delete</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-medium text-sm">Task Priority</h3>
+                <a href="#" class="text-xs text-coral-600">+ Add New Priority</a>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="min-w-full text-sm">
+                  <thead class="text-slate-500">
+                    <tr class="border-b border-slate-200">
+                      <th class="w-14 text-left py-2 px-2">SN</th>
+                      <th class="text-left py-2 px-2">Task Priority</th>
+                      <th class="text-right py-2 px-2">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="border-b border-slate-200">
+                      <td class="py-2 px-2">1</td>
+                      <td class="py-2 px-2">Extreme</td>
+                      <td class="py-2 px-2 text-right">
+                        <button class="inline-flex items-center gap-1 bg-orange-500 text-white px-2 py-1 rounded-md">Edit</button>
+                        <button class="inline-flex items-center gap-1 bg-orange-500/90 text-white px-2 py-1 rounded-md ml-2">Delete</button>
+                      </td>
+                    </tr>
+                    <tr class="border-b border-slate-200">
+                      <td class="py-2 px-2">2</td>
+                      <td class="py-2 px-2">Moderate</td>
+                      <td class="py-2 px-2 text-right">
+                        <button class="inline-flex items-center gap-1 bg-orange-500 text-white px-2 py-1 rounded-md">Edit</button>
+                        <button class="inline-flex items-center gap-1 bg-orange-500/90 text-white px-2 py-1 rounded-md ml-2">Delete</button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="py-2 px-2">3</td>
+                      <td class="py-2 px-2">Low</td>
+                      <td class="py-2 px-2 text-right">
+                        <button class="inline-flex items-center gap-1 bg-orange-500 text-white px-2 py-1 rounded-md">Edit</button>
+                        <button class="inline-flex items-center gap-1 bg-orange-500/90 text-white px-2 py-1 rounded-md ml-2">Delete</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- My Task -->
+      <div id="myTaskSection" class="hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Left: My Tasks list -->
+          <section class="bg-white rounded-2xl p-5 card">
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="text-sm font-semibold">My Tasks</h2>
+            </div>
+            <div class="space-y-4">
+              <!-- Task row 1 -->
+              <article class="border border-slate-200 rounded-xl p-4 flex gap-4 items-center">
+                <div class="flex-1">
+                  <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full border-2 border-red-500"></span>
+                    <h3 class="font-semibold">Submit Documents</h3>
+                  </div>
+                  <p class="text-sm text-slate-600 mt-2">Make sure to submit all the necessary documents on time…</p>
+                  <div class="mt-3 flex items-center gap-3 text-xs">
+                    <span>Priority: <span class="text-red-600 font-medium">Extreme</span></span>
+                    <span>Status: <span class="text-red-600">Not Started</span></span>
+                    <span>Created on: 20/06/2023</span>
+                  </div>
+                </div>
+                <img class="w-20 h-16 rounded-lg object-cover" src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=300&auto=format&fit=crop" alt="documents" />
+              </article>
+              <!-- Task row 2 -->
+              <article class="border border-slate-200 rounded-xl p-4 flex gap-4 items-center">
+                <div class="flex-1">
+                  <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full border-2 border-blue-500"></span>
+                    <h3 class="font-semibold">Complete assignments</h3>
+                  </div>
+                  <p class="text-sm text-slate-600 mt-2">The assignments must be completed to pass final year…</p>
+                  <div class="mt-3 flex items-center gap-3 text-xs">
+                    <span>Priority: <span class="text-slate-900">Moderate</span></span>
+                    <span>Status: <span class="text-blue-600">In Progress</span></span>
+                    <span>Created on: 20/06/2023</span>
+                  </div>
+                </div>
+                <img class="w-20 h-16 rounded-lg object-cover" src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=300&auto=format&fit=crop" alt="assignments" />
+              </article>
+            </div>
+          </section>
+
+          <!-- Right: Selected Task details -->
+          <section class="bg-white rounded-2xl p-5 card">
+            <div class="flex items-center gap-4">
+              <img class="w-20 h-16 rounded-lg object-cover" src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=300&auto=format&fit=crop" alt="documents" />
+              <div>
+                <h3 class="font-semibold">Submit Documents</h3>
+                <p class="text-xs mt-1">Priority: <span class="text-red-600 font-medium">Extreme</span> • Status: <span class="text-red-600">Not Started</span> • Created on: 20/06/2023</p>
+              </div>
+            </div>
+            <div class="mt-4 space-y-3 text-sm text-slate-700">
+              <p><span class="font-semibold">Task Title:</span> Document Submission.</p>
+              <p><span class="font-semibold">Objective:</span> To submit required documents for something important.</p>
+              <p><span class="font-semibold">Task Description:</span> Review the list of documents required for submission and ensure all necessary documents are ready. Organize the documents accordingly and scan them if physical copies need to be submitted digitally. Rename the scanned files appropriately for easy identification and verify the accepted file formats. Upload the documents securely to the designated platform, double-check for accuracy, and obtain confirmation of successful submission. Follow up if necessary to ensure proper processing.</p>
+              <div>
+                <p class="font-semibold">Additional Notes:</p>
+                <ul class="list-disc ml-5 mt-2 space-y-1">
+                  <li>Ensure that the documents are authentic and up-to-date.</li>
+                  <li>Maintain confidentiality and security of sensitive information during the submission process.</li>
+                  <li>If there are specific guidelines or deadlines for submission, adhere to them diligently.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-4 flex gap-2 justify-end">
+              <a class="inline-flex items-center gap-1 bg-coral-500 text-white px-3 py-2 rounded-md" href="#">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5l4 4-11 11H5.5v-4l11-11z"/></svg>
+                <span class="text-xs">Edit</span>
+              </a>
+              <a class="inline-flex items-center gap-1 bg-coral-500/90 text-white px-3 py-2 rounded-md" href="#">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9l6 6M15 9l-6 6"/></svg>
+                <span class="text-xs">Delete</span>
+              </a>
+            </div>
+            <div class="mt-4 text-right">
+              <a href="#dashboard" class="text-sm text-coral-600 hover:text-coral-500">Go Back</a>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+</body>
